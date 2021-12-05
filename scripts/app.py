@@ -1,4 +1,5 @@
 import cv2
+
 from background_substractor import VideoCollector
 
 

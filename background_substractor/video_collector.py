@@ -32,6 +32,9 @@ class VideoCollector:
             self.initialized = True
 
     def run(self):
+        '''
+        return frame ndarray
+        '''
         ret, frame = self.capture.read()
 
         if ret:

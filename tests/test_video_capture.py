@@ -1,4 +1,5 @@
 from background_substractor import VideoCollector
+import numpy as np
 
 
 class TestVideoCollector:
@@ -10,6 +11,4 @@ class TestVideoCollector:
         assert video_capture.initialized
 
         frame = video_capture.run()
-        print('frame is type: ')
-        print(type(frame))
-        assert True
+        assert isinstance(frame, np.ndarray)
