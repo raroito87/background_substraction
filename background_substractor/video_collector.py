@@ -19,11 +19,11 @@ class VideoCollector:
         self.initialized = False
 
     def initialize(self, video_path=None):
-
+        print(video_path)
         if video_path is None:
             self.capture = cv2.VideoCapture(0)
         else:        
-            self.capture = cv2.VideoCapture(cfg.dirs['data'])
+            self.capture = cv2.VideoCapture(video_path)
 
             # Check if the webcam is opened correctly
         if not self.capture.isOpened():
