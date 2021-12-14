@@ -1,4 +1,4 @@
-from background_substractor import Utilities
+from background_substractor import Utilities, KeypointsDetector
 import cv2
 import app_configuration as cfg
 import numpy as np
@@ -26,24 +26,33 @@ def load_test_frames():
 
     return cv2.resize(frame_0, dsize=dsize), cv2.resize(frame_1, dsize=dsize)
 
-class TestMotionDetector:
+class TestKeypointsDetector:
 
-    def test_detect_keypoints_surf(self):
-        frame_0, frame_1 = load_test_frames()
+        
+    def test_initialized_fails(self):
+        keypoints_detector = KeypointsDetector()
+        try:
+            keypoints_detector.detect_keypoints(None)
+        except:
+            print('exception catched')
+            assert True
 
-        # going to try the SURF algorithm
-        surf = cv2.xfeatures2d.SURF_create(400)
+    # def test_detect_keypoints_surf(self):
+    #     frame_0, frame_1 = load_test_frames()
 
-        # Find keypoints and descriptors directly
-        kp_0, des_0 = surf.detectAndCompute(frame_0, None)
-        kp_1, des_1 = surf.detectAndCompute(frame_1, None)
+    #     # going to try the SURF algorithm
+    #     surf = cv2.xfeatures2d.SURF_create(400)
 
-        print('detected kp: ', len(kp_0), len(kp_1))
+    #     # Find keypoints and descriptors directly
+    #     kp_0, des_0 = surf.detectAndCompute(frame_0, None)
+    #     kp_1, des_1 = surf.detectAndCompute(frame_1, None)
 
-        # draw the keypoints
-        img_0 = cv2.drawKeypoints(frame_0,kp_0,None,(255,0,0))
-        img_1 = cv2.drawKeypoints(frame_1,kp_1,None,(255,0,0))
-        # Utilities.display_2_frames(img_0, img_1)
+    #     print('detected kp: ', len(kp_0), len(kp_1))
+
+    #     # draw the keypoints
+    #     img_0 = cv2.drawKeypoints(frame_0,kp_0,None,(255,0,0))
+    #     img_1 = cv2.drawKeypoints(frame_1,kp_1,None,(255,0,0))
+    #     # Utilities.display_2_frames(img_0, img_1)
 
     def test_detect_keypoints_orb(self):
         frame_0, frame_1 = load_test_frames()
@@ -82,7 +91,7 @@ class TestMotionDetector:
         # draw the keypoints
         img_0 = cv2.drawKeypoints(frame_0,kp_0,None,(255,0,0))
         img_1 = cv2.drawKeypoints(frame_1,kp_1,None,(255,0,0))
-        Utilities.display_2_frames(img_0, img_1)
+        #Utilities.display_2_frames(img_0, img_1)
 
     # def test_orb_faster_than_surf(self):
     #     # Can't run this test because SURF is not available in this opencv version
@@ -103,7 +112,7 @@ class TestMotionDetector:
 
     #     assert surf_time > orb_time
 
-    def test_biblid_faster_than_orb(self):        
+    def test_beblid_faster_than_orb(self):        
         frame_0, frame_1 = load_test_frames()
 
         orb = cv2.ORB_create(400)
@@ -122,12 +131,14 @@ class TestMotionDetector:
 
         assert orb_time > biblid_time
 
-    def test_get_4_keypoints(self):
-        # get the most 4 significant points
+    def test_get_keypoints(self):
         frame_0, frame_1 = load_test_frames()
-        
-        orb = cv2.ORB_create(10)
-        kp_0, des_0 = orb.detectAndCompute(frame_0, None)
 
-        pprint(kp_0)
-        pprint(des_0)
+        keypoint_detector = KeypointsDetector()
+        assert keypoint_detector.initialize()
+
+        kp, des = keypoint_detector.detect_keypoints(frame_0)
+        
+        assert isinstance(kp, tuple)
+        assert isinstance(des, np.ndarray)
+        assert len(kp) == len(des)
